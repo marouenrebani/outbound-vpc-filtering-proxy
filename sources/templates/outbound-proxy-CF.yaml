@@ -154,16 +154,6 @@ Resources:
                 - logs:DescribeLogStreams
             Resource:
              - !GetAtt OutboundProxyLogGroup.Arn
-      - PolicyName: AssociateEIP
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - ec2:AssociateAddress
-            - ec2:Describe*
-            Resource:
-            - "*"
       - PolicyName: RevokeAuthorizeSG
         PolicyDocument:
           Version: '2012-10-17'
@@ -200,26 +190,6 @@ Resources:
       Name: Proxy-Domains-Whitelisting
       Description: This secret contains the proxy whitelisted domains 
       SecretString: !Ref WhitelistedDomains
-
-  FixedEIPa:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-  
-  FixedEIPb:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-
-  FixedEIPc:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-
-  FixedEIPd:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
 
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -620,18 +590,6 @@ Resources:
             /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
             # start the cloud watch agent
             systemctl start awslogsd
-            # get the IP allocation id 
-            EIPs=(${FixedEIPa.AllocationId} ${FixedEIPb.AllocationId} ${FixedEIPc.AllocationId} ${FixedEIPd.AllocationId})
-            for i in ${!EIPs[@]}; do
-               out=$(aws ec2  describe-addresses --region ${AWS::Region} --allocation-ids $i) 
-               if [[ $out != *AssociationId* ]]; then 
-                     freeEIP=$i
-                     break
-               fi
-            done
-            # bind the address 
-            echo "binding EIP"
-            aws ec2 associate-address --region ${AWS::Region} --instance-id $(curl -s http://169.254.169.254/latest/meta-data/instance-id) --allocation-id $freeEIP --allow-reassociation || error_exit 'Failed to Associate Elastic IP'
             # generate dummy certificate
             openssl req -x509 -newkey rsa:4096 -keyout /etc/squid/cert.pem -out /etc/squid/cert.pem -days 3650 -subj "/C=XX/ST=XX/L=squid/O=squid/CN=squid" -nodes
             #  get the whitelisted domain
@@ -674,27 +632,6 @@ Outputs:
     Value: !Ref ProxyPort
     Export:
       Name: Proxy-Port
-  
-  EgressIP1:
-    Description: Outbound Proxy source IP (first)
-    Value: !Ref FixedEIPa
-    Export: 
-        Name: Proxy-Egress-IP-1
-  EgressIP2:
-    Description: Outbound Proxy source IP (second)
-    Value: !Ref FixedEIPb
-    Export: 
-        Name: Proxy-Egress-IP-2
-  EgressIP3:
-    Description: Outbound Proxy source IP (third) 
-    Value: !Ref FixedEIPc
-    Export: 
-        Name: Proxy-Egress-IP-3
-  EgressIP4:
-    Description: Outbound Proxy source IP (fourth)
-    Value: !Ref FixedEIPd
-    Export: 
-        Name: Proxy-Egress-IP-4
 
   SecurityGroupProxy:
     Description: Proxy security group 
