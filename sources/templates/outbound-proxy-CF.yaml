@@ -42,25 +42,6 @@ Parameters:
     Description: WebServer EC2 instance type
     Type: String
     Default: t3.medium
-    AllowedValues:
-    - t3.nano
-    - t3.micro
-    - t3.small
-    - t3.medium
-    - t3.large
-    - m3.medium
-    - m3.large
-    - m3.xlarge
-    - m3.2xlarge
-    - m4.large
-    - m4.xlarge
-    - m4.2xlarge
-    - m5.large
-    - m5.xlarge
-    - m5.2xlarge
-    - c3.large
-    - c3.xlarge
-    - c4.large
     ConstraintDescription: must be a valid EC2 instance type.
 
   NetworkAllowedCIDR:
