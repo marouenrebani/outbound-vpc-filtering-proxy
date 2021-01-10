@@ -92,9 +92,9 @@ Metadata:
       VpcId:
         default: VPC ID
       NLBSubnetIDs:
-        default: Private Subnet IDs
+        default: NLB Subnet IDs
       ProxySubnetIDs:
-        default: Public Subnet IDs
+        default: Proxy Subnet IDs
       NetworkAllowedCIDR:
         default: Allowed client CIRD
 
