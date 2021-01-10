@@ -30,12 +30,12 @@ Parameters:
     Description: VPC ID Where the Proxy will be installed
     Type: "AWS::EC2::VPC::Id"
 
-  PrivateSubnetIDs: 
-    Description: Private SubnetIDs where the Network LoadBalancer will be placed (Select min 2 max 3)
+  NLBSubnetIDs: 
+    Description: SubnetIDs where the Network LoadBalancer will be placed (Select min 2 max 3)
     Type: "List<AWS::EC2::Subnet::Id>"
   
-  PublicSubnetIDs: 
-    Description: Public SubnetIDs where the proxy will be placed (Select min 2 max 3)
+  ProxySubnetIDs: 
+    Description: SubnetIDs where the proxy will be placed (Select min 2 max 3)
     Type: "List<AWS::EC2::Subnet::Id>"
   
   InstanceType:
@@ -91,8 +91,8 @@ Metadata:
         default: Network parameter
       Parameters:
       - VpcId
-      - PrivateSubnetIDs
-      - PublicSubnetIDs 
+      - NLBSubnetIDs
+      - ProxySubnetIDs 
       - NetworkAllowedCIDR
 
     ParameterLabels:
@@ -110,9 +110,9 @@ Metadata:
         default: SSH Key name
       VpcId:
         default: VPC ID
-      PrivateSubnetIDs:
+      NLBSubnetIDs:
         default: Private Subnet IDs
-      PublicSubnetIDs:
+      ProxySubnetIDs:
         default: Public Subnet IDs
       NetworkAllowedCIDR:
         default: Allowed client CIRD
@@ -197,7 +197,7 @@ Resources:
       Scheme: internal
       Type: network
       Name: OutboundProxyLoadBalancer
-      Subnets: !Ref PrivateSubnetIDs
+      Subnets: !Ref NLBSubnetIDs
   
   NetworkLoadBalancerTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -244,7 +244,7 @@ Resources:
   OutboundProxyASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
-      VPCZoneIdentifier: !Ref PublicSubnetIDs
+      VPCZoneIdentifier: !Ref ProxySubnetIDs
       Cooldown: 120
       LaunchConfigurationName: !Ref OutboundProxyLaunchConfig
       MaxSize: 3
