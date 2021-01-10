@@ -97,7 +97,7 @@ Resources:
       MapPublicIpOnLaunch: 'false'
       Tags:
         - Key: Name
-          Value: Pubic subnet 3
+          Value: Public subnet 3
 
       VpcId: !Ref 'VPC'
   PublicRouteTable:
@@ -172,7 +172,7 @@ Resources:
       VpcId: !Ref 'VPC'
       Tags:
         - Key: Name
-          Value: Private Route Table 1
+          Value: Private Route Table
   AttachPrivateSubnet1RouteTable1:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
