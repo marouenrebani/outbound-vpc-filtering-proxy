@@ -47,7 +47,7 @@ Parameters:
   NetworkAllowedCIDR:
     Description: CIDR allowed in Proxy Security Group. The allowed block size is between a /32 netmask and /8 netmask
     Type: String
-    Default: 172.31.0.0/16
+    Default: 10.0.0.0/16
     AllowedPattern: ^[.0-9]*\/([89]|[12][0-9]|3[0-2])$
 
   LatestAmiId:
